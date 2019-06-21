@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+    <div>
+        <a v-bind:href="link.link">Full:{{link.name}}</a><br/>
+        <a :href="link.link" :class="myclass">Abbreviate:{{link.name}}</a>
+    </div>
+    <div>{{5+5}}</div>
+    <div>{{ok ? 'Yes' : 'No'}}</div>
+    <div>{{message.split('').reverse().join('')}}</div>
+    <div v-bind:id="'list-' + id">Map</div>
+    <div>Total: {{amount}}</div>
+    <span v-html="amount_html"></span>
+    <div>{{getAmount()}}</div>
+    <div>
+        <ul>
+            <li v-for="(goods, index) in goodslist">
+                {{index+1}}:{{goods.name}} ==>> {{goods.price}}
+                <ul>
+                    <li v-for="(v,k,i) in goods">
+                        {{i}}:{{k}}==>>{{v}}
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div><h4>Price more than 6000</h4></div>
+    <div v-for="goods in filterGoodslist">
+        <ul>
+            <li v-for="(v,k,i) in goods">
+                {{i}}:{{k}}==>>{{v}}
+            </li>
+        </ul>
+    </div>
+    <table @click="editItem($event)">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Edit</th>
+        </tr>
+        <tr v-for="(goods,index) in goodslists3">
+            <td>{{index+1}}</td>
+            <td>{{goods.name}}</td>
+            <td>{{goods.price}}</td>
+            <td><a href="#" v-bind:data-index="index">Edit</a></td>
+        </tr>
+    </table>
+</div>
+<script src="https://unpkg.com/vue"></script>
+<script>
+    var data = {
+        myclass: false,
+        link:{
+            name: 'Vue Development Link',
+            link:'https://cn.vuejs.org/v2/guide'
+        },
+        ok: true,
+        message: 'ZXCVBNM',
+        id:1,
+        my_count:6,
+        price:12,
+        discount:0.8,
+        freight:5,
+        goodslist:[
+            {name:'iphone', price:'8888', mete: 'This is iphone!'},
+            {name:'mp4', price:'888'},
+            {name:'bike', price:'88'},
+        ],
+        goodslists3:[
+            {name:'apple',price:'1202'},
+            {name:'tree',price:'1123'},
+            {name:'rice',price:'123'},
+        ],
+        list:['m1','m2','m3']
+    };
+    var vm = new Vue({
+        el:'#app',
+        data: data,
+        computed:{
+            amount:function () {
+                return this.$data.my_count*this.$data.price*this.$data.discount+this.$data.freight
+            },
+            amount_html:function () {
+                return '<span>'+(this.$data.my_count*this.$data.price*this.$data.discount+this.$data.freight) +'</span>'
+            },
+            filterGoodslist:function () {
+                return this.goodslist.filter(function (goods) {
+                    return goods.price > 6000
+                })
+            }
+        },
+        methods:{
+            getAmount:function () {
+                return (this.$data.my_count*this.$data.price*this.$data.discount+this.$data.freight)
+            },
+            editItem:function (event) {
+                if(event.target.nodeName.toLowerCase()=='a'){
+                    console.log(event.target);
+                    console.log(event.target.dataset.index)
+                }
+            }
+        },
+    });
+    var r, arr = ['apple', 'strawberry', 'banana', 'pear', 'apple', 'orange', 'orange', 'strawberry'];
+    r = arr.filter(function (element, index, self) {
+        return self.indexOf(element) === index;
+    });
+    console.log(r.toString());
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>todolist</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<div id="app" class="container">
+    <div class="card row">
+        <div class="card-header">todo-list</div>
+        <div class="card-body">
+            <div>
+                Add new item: <input type="text" v-model="item.name" @keyup.enter="additems">
+            </div>
+            <div>
+                <ul>
+                    <li v-for="(item, index) in pageitems">
+                        <span v-if="item.status == 1"@dblclick="item.status = 2" @click="item.status = 3">{{item.name}}</span>
+                        <span v-if="item.status == 2"><input type="text" v-model="item.name" @blur="item.status = 1"></span>
+                        <span v-if="item.status == 3"@dblclick="item.status = 2"><del>{{item.name}}</del></span>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <ul class="pagination">
+                    <li class="page-item">
+                        <a href="#" class="page-link" @click.prevent="lastpage">lastpage</a>
+                    </li>
+                    <li v-for="p in pagecount" :class="page == p ? 'page-item active' : 'page-item'">
+                        <a href="#" class="page-link" @click.prevent="jumpToPage(p)">{{p}}</a>
+                    </li>
+                    <li class="page-item">
+                        <a href="#" class="page-link"@click.prevent="nextpage">nextpage</a>
+                    </li>
+                </ul>
+                Eche page show: <input type="text" v-model="size" @keyup.enter="changePagesize(size)">
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/vue"></script>
+<script>
+    var data ={
+        items : [
+            {name: 'item1', status: 1}
+        ],
+        item : {
+            name: '',
+            status: 1
+        },
+        pagesize: 5,
+        page:1,
+        size:''
+    };
+    var vm = new Vue({
+        el:'#app',
+        data: data,
+        computed:{
+            //总页数
+            pagecount: function () {
+                return Math.ceil(this.items.length / this.pagesize)
+            },
+            //当前页 记录
+            pageitems: function () {
+                var offset = (this.page - 1)* this.pagesize;
+                return this.items.slice(offset, offset + this.pagesize)
+            }
+        },
+        methods:{
+            //添加项目
+            additems: function () {
+                this.items.push({
+                    name: this.item.name,
+                    status:1
+                });
+                this.item.name = '';
+            },
+            //删除项目
+            delitem: function (index) {
+                this.items[index].status = 3;
+            },
+            //修改每页显示数量
+            changePagesize:function (size) {
+                this.pagesize = size;
+                this.size = '';
+            },
+            //跳转页面
+            jumpToPage:function (p) {
+                this.page = p;
+            },
+            //上一页
+            lastpage:function () {
+                if(this.page === 1){
+                    this.page = 1;
+                }
+                else this.page--;
+            },
+            //下一页
+            nextpage:function () {
+                if(this.page >= this.pagecount){
+                    this.page = this.pagecount;
+                }
+                else this.page++;
+            }
+        }
+    })
+</script>
+</body>
+</html>
